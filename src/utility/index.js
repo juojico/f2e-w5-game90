@@ -1,5 +1,5 @@
-const range = (num, max, min) => {
-  if (!num) {
+export const toRange = (num, max, min) => {
+  if (typeof num !== "number") {
     return 0;
   }
   if (num > max) {
@@ -11,4 +11,12 @@ const range = (num, max, min) => {
   return num;
 };
 
-export { range };
+export const inRange = (num, min, max) => {
+  if (typeof num !== "number") {
+    return false;
+  }
+  if (num >= min && num <= max) {
+    return true;
+  }
+  return false;
+};

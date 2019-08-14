@@ -1,11 +1,11 @@
-export const toRange = (num, max, min) => {
+export const toRange = (num, min, max) => {
   if (typeof num !== "number") {
     return 0;
   }
   if (num > max) {
     return max;
   }
-  if (min && num < min) {
+  if (num < min) {
     return min;
   }
   return num;

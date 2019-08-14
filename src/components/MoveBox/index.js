@@ -1,52 +1,63 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
+import { toRange } from "../../utility";
 
 const BoxWrapper = styled.div`
   position: absolute;
-  width: ${props => props.width}px;
-  height: ${props => props.height}px;
+  width: ${props => props.width};
+  height: ${props => props.height};
   top: ${props => props.top}px;
   left: ${props => props.left}px;
+  margin-top: 30px;
   background-color: ${props => props.bgColor};
+  transform: translate(0,-100%);
+  transition: 0.1s linear;
 `;
 
-const move = e => {
-    console.log("TCL: move", e.type);
-  return e.type;
-};
-
-document.addEventListener("keydown", move);
-document.addEventListener("keyup", move);
-
 const MoveBox = ({
-  width = 10,
-  height = 10,
+  children,
+  width = "auto",
+  height = "auto",
   speed = 1,
-  bgColor = "transparent"
+  bgColor = "transparent",
+  top = 0,
+  left = 0,
+  up = 0,
+  down = 0,
+  backward = 0,
+  forward = 0,
+  start = true,
+  direction = "stop",
+  area = [0, 200, 0, 200]
 }) => {
-  const [position, setPosition] = useState({ top: 0, left: 0 });
-  useEffect(() => {
-    switch (move) {
-      case "keydown":
-        console.log("TCL: move", move);
-        setTimeout(() => {
-          setPosition({ top: (position.top += 1) });
-        }, 200);
-        break;
+  const [position, setPosition] = useState({ top: top, left: left });
 
-      default:
-        break;
-    }
-  });
+  if (start) {
+    setTimeout(() => {
+      setPosition({
+        ...position,
+        top: toRange(position.top + speed * (down - up), area[2], area[3]),
+        left: toRange(
+          position.left + speed * (forward - backward),
+          area[0],
+          area[1]
+        )
+      });
+    }, 100);
+  }
+
   return (
     <BoxWrapper
       width={width}
       height={height}
-      speed={speed}
       bgColor={bgColor}
-      top={position.top}
-      left={position.left}
-    />
+      style={{
+        top: position.top,
+        left: position.left
+      }}
+    >
+      {children}
+    </BoxWrapper>
   );
 };
 

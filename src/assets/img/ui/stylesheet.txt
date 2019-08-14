@@ -1,0 +1,89 @@
+.sprite {
+    background-image: url(spritesheet.png);
+    background-repeat: no-repeat;
+    display: block;
+}
+
+.sprite-btn-close {
+    width: 86px;
+    height: 86px;
+    background-position: -4px -4px;
+}
+
+.sprite-icon-header-help-hover {
+    width: 28px;
+    height: 28px;
+    background-position: -98px -4px;
+}
+
+.sprite-icon-header-help-normal {
+    width: 28px;
+    height: 28px;
+    background-position: -134px -4px;
+}
+
+.sprite-icon-hp-off {
+    width: 60px;
+    height: 60px;
+    background-position: -170px -4px;
+}
+
+.sprite-icon-hp-on {
+    width: 60px;
+    height: 60px;
+    background-position: -238px -4px;
+}
+
+.sprite-icon-time {
+    width: 120px;
+    height: 120px;
+    background-position: -306px -4px;
+}
+
+.sprite-img-failure {
+    width: 178px;
+    height: 256px;
+    background-position: -4px -132px;
+}
+
+.sprite-img-failure-tittle {
+    width: 281px;
+    height: 125px;
+    background-position: -190px -132px;
+}
+
+.sprite-img-win {
+    width: 226px;
+    height: 289px;
+    background-position: -479px -4px;
+}
+
+.sprite-img-win-tittle {
+    width: 220px;
+    height: 107px;
+    background-position: -190px -301px;
+}
+
+.sprite-logo {
+    width: 545px;
+    height: 109px;
+    background-position: -4px -416px;
+}
+
+.sprite-progress-boss {
+    width: 10px;
+    height: 40px;
+    background-position: -434px -4px;
+}
+
+.sprite-progress-flag-off {
+    width: 18px;
+    height: 40px;
+    background-position: -452px -4px;
+}
+
+.sprite-progress-flag-on {
+    width: 18px;
+    height: 40px;
+    background-position: -713px -4px;
+}

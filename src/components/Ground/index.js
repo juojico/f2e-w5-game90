@@ -4,7 +4,7 @@ import { startLine, finishLine } from "../../assets";
 
 const GroundWrapper = styled.div`
   position: absolute;
-  width: 1200px;
+  width: 100%;
   height: 500px;
   top: 300px;
   left: 0;

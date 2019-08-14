@@ -1,39 +1,42 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import MoveBox from "../components/MoveBox";
+import Boxs from "../components/Boxs";
 import Hero from "../components/Hero";
 import Ground from "../components/Ground";
 import Sky from "../components/Sky";
 
 const Container = styled.div`
   position: absolute;
-  width: 1200px;
+  width: 1280px;
   height: 800px;
   background: #31135a;
+  transform-origin: top left;
 `;
 
 const BgArea = styled.div`
   position: absolute;
-  width: 1200px;
-  height: 800px;
+  width: 100%;
+  height: 100%;
   z-index: 1;
 `;
 
 const GameArea = styled.div`
   position: absolute;
-  width: 1200px;
-  height: 800px;
+  width: 100%;
+  height: 100%;
   z-index: 10;
 `;
 
 const UIArea = styled.div`
   position: absolute;
-  width: 1200px;
-  height: 800px;
+  width: 100%;
+  height: 100%;
   z-index: 30;
 `;
 
 function MainScreen() {
+  const [viewW, setViewW] = useState(window.innerWidth / 1280);
   const [listen, setListen] = useState(true);
   const [hero, setHero] = useState({ animation: "normal" });
   const [moving, setMoving] = useState({
@@ -43,6 +46,10 @@ function MainScreen() {
     backward: 0,
     forward: 0
   });
+
+  window.onresize = () => {
+    setViewW(window.innerWidth / 1280);
+  };
 
   const whichDirect = keyCode => {
     switch (keyCode) {
@@ -93,10 +100,10 @@ function MainScreen() {
   }
 
   return (
-    <Container>
+    <Container style={{ transform: `scale(${viewW})` }}>
       <BgArea>
-        <Sky start={true} />
-        <Ground lineBg='startLine'/>
+        <Sky start="true" />
+        <Ground lineBg="startLine" />
       </BgArea>
 
       <GameArea>
@@ -118,6 +125,7 @@ function MainScreen() {
         >
           <Hero animation={hero.animation} />
         </MoveBox>
+        <Boxs />
       </GameArea>
 
       <UIArea>ui</UIArea>

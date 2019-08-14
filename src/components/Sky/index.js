@@ -9,7 +9,7 @@ const bgMove = keyframes`
 `;
 const bgDefault = styled.div`
   position: absolute;
-  width: 1200px;
+  width: 100%;
   height: 300px;
   top: 0;
   left: 0;
@@ -23,7 +23,10 @@ const SkyWrapper = styled(bgDefault)`
 const Cloud = styled(bgDefault)`
   background-image: url(${cloud});
   animation: ${bgMove} 20s linear infinite;
-  ${props=>props.start?'animation-play-state:runnung;':'animation-play-state:paused;'}
+  ${props =>
+    props.start
+      ? "animation-play-state:runnung;"
+      : "animation-play-state:paused;"}
 `;
 
 const Mountain1 = styled(bgDefault)`
@@ -32,7 +35,10 @@ const Mountain1 = styled(bgDefault)`
   bottom: 0;
   background-image: url(${mountain1});
   animation: ${bgMove} 10s linear infinite;
-  ${props=>props.start?'animation-play-state:runnung;':'animation-play-state:paused;'}
+  ${props =>
+    props.start
+      ? "animation-play-state:runnung;"
+      : "animation-play-state:paused;"}
 `;
 
 const Mountain2 = styled(bgDefault)`
@@ -41,10 +47,13 @@ const Mountain2 = styled(bgDefault)`
   bottom: 0;
   background-image: url(${mountain2});
   animation: ${bgMove} 15s linear infinite;
-  ${props=>props.start?'animation-play-state:runnung;':'animation-play-state:paused;'}
+  ${props =>
+    props.start
+      ? "animation-play-state:runnung;"
+      : "animation-play-state:paused;"}
 `;
 
-const Sky = ({ children, start=false }) => {
+const Sky = ({ children, start = false }) => {
   return (
     <SkyWrapper>
       <Cloud start={start} />

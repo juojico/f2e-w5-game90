@@ -8,7 +8,7 @@ import footer from "./img/bg/bg-footer.png";
 import cloud from "./img/bg/bg-cloud.png";
 import mountain1 from "./img/bg/bg-mountain-front.png";
 import mountain2 from "./img/bg/bg-mountain-back.png";
-import sky from "./img/bg/bg-sky.png";
+import sky from "./img/bg/bg-sky.jpg";
 import startLine from "./img/bg/startingLine.png";
 import finishLine from "./img/bg/finishingLine.png";
 

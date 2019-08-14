@@ -16,8 +16,9 @@ const MarkingLine = styled.div`
   width: 200px;
   height: 500px;
   left: 0;
-  background-image: url(${props=>props.lineBg});
+  background-image: url(${props => props.lineBg});
   background-repeat: no-repeat;
+  transition: 1s;
 `;
 
 const LINE_BG = {
@@ -25,7 +26,12 @@ const LINE_BG = {
   finishLine: finishLine
 };
 
-const Ground = ({ children, lineBg='startLine', lineTop, lineLeft }) => {
+const Ground = ({
+  children,
+  lineBg = "startLine",
+  start = false,
+  end = false
+}) => {
   return (
     <GroundWrapper>
       <MarkingLine

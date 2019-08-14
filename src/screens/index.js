@@ -3,6 +3,7 @@ import styled from "styled-components";
 import MoveBox from "../components/MoveBox";
 import Hero from "../components/Hero";
 import Ground from "../components/Ground";
+import Sky from "../components/Sky";
 
 const Container = styled.div`
   position: absolute;
@@ -94,22 +95,25 @@ function MainScreen() {
   return (
     <Container>
       <BgArea>
-        <Ground />
+        <Sky start={true} />
+        <Ground lineBg='startLine'/>
       </BgArea>
 
       <GameArea>
-        <Hero animation='heroBuff' />
-        <Hero animation='heroHurt' />
-        <Hero animation='heroDie' />
+        <Hero animation="heroBuff" />
+        <Hero animation="heroHurt" />
+        <Hero animation="heroDie" />
         <MoveBox
           speed={20}
+          width={90}
+          height={24}
           top={500}
           left={50}
           up={moving.up}
           down={moving.down}
           backward={moving.backward}
           forward={moving.forward}
-          area={[0, 400, 300, 770]}
+          area={[0, 800, 300, 770]}
           start={moving.start}
         >
           <Hero animation={hero.animation} />

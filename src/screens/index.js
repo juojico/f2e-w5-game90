@@ -1,155 +1,54 @@
 import React, { useState } from "react";
-import styled from "styled-components";
-import UIArea from "./UIArea.js";
-import MoveBox from "../components/MoveBox";
-import Boxs from "../components/Boxs";
-import Hero from "../components/Hero";
-import Enemies from "../components/Enemies";
-import Things from "../components/Things";
-import Ground from "../components/Ground";
-import Sky from "../components/Sky";
-
-const Container = styled.div`
-  position: absolute;
-  width: 1280px;
-  height: 800px;
-  background: #31135a;
-  transform-origin: top left;
-`;
-
-const BgArea = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-`;
-
-const GameArea = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  z-index: 10;
-`;
-
+import Gaming from "./Gaming";
+import UIArea from "./UIArea";
+import GameStart from "./GameStart";
+import Background from "./Background";
+import { TOTAL_TIME } from "../constants";
 
 function MainScreen() {
-  const [viewW, setViewW] = useState(window.innerWidth / 1280);
-  const [listen, setListen] = useState(true);
-  const [hero, setHero] = useState({ animation: "normal" });
-  const [moving, setMoving] = useState({
-    start: false,
-    up: 0,
-    down: 0,
-    backward: 0,
-    forward: 0
+  const [games, setGames] = useState({
+    start: true,
+    readyStart: false,
+    gaming: false,
+    gameOver: false,
+    gameClear: false
   });
 
-  window.onresize = () => {
-    setViewW(window.innerWidth / 1280);
+  const [time, setTime] = useState(TOTAL_TIME);
+  if (games.gaming && time > 0) {
+    setTimeout(() => {
+      setTime(time - 1);
+    }, 1000);
+  }
+
+  const [readyTime, setReadyTime] = useState(5);
+  if (games.readyStart && readyTime > 0) {
+    setTimeout(() => {
+      setReadyTime(readyTime - 1);
+    }, 1000);
+  }
+
+  const gameReadyStart = () => {
+    setGames({ ...games, start: false, readyStart: true });
   };
 
-  const whichDirect = keyCode => {
-    switch (keyCode) {
-      case 38:
-      case 87:
-        return "up";
-      case 40:
-      case 83:
-        return "down";
-      case 37:
-      case 65:
-        return "backward";
-      case 39:
-      case 68:
-        return "forward";
-      default:
-        return null;
-    }
+  const gameStart = () => {
+    setGames({ ...games, readyStart: false, gaming: true });
   };
 
-  const handleKey = e => {
-    const keyName = whichDirect(e.keyCode);
-
-    switch (e.type) {
-      case "keydown":
-        setMoving({ ...moving, start: true, [keyName]: 1 });
-        setHero({ animation: "heroWalk" });
-        console.log("TCL: MainScreen -> movingkeydown", moving);
-        break;
-      case "keyup":
-        setMoving({ ...moving, start: false, [keyName]: 0 });
-        setHero({ animation: "normal" });
-        console.log("TCL: MainScreen -> movingkeyup", moving);
-        break;
-
-      default:
-        setMoving({ ...moving, start: false });
-        break;
-    }
-  };
-
-  console.log("TCL: MainScreen", moving);
-
-  if (listen) {
-    setListen(false);
-    document.addEventListener("keydown", handleKey);
-    document.addEventListener("keyup", handleKey);
+  if (games.readyStart && readyTime === 0) {
+    gameStart();
   }
 
   return (
-    <Container style={{ transform: `scale(${viewW})` }}>
-      <BgArea>
-        <Sky start='true' />
-        <Ground lineBg='startLine' />
-      </BgArea>
+    <>
+      <GameStart open={games.start} onClick={gameReadyStart} />
+      <Background start={games.gaming} gameClear={games.gameClear} />
 
-      <GameArea>
-        <Hero animation='heroBuff' />
-        <Hero animation='heroHurt' />
-        <Hero animation='heroDie' />
-        <MoveBox
-          speed={20}
-          width={90}
-          height={24}
-          top={500}
-          left={50}
-          up={moving.up}
-          down={moving.down}
-          backward={moving.backward}
-          forward={moving.forward}
-          area={[0, 800, 300, 770]}
-          start={moving.start}
-        >
-          <Hero animation={hero.animation} />
-        </MoveBox>
-        <Boxs speed={20} width={300} height={120} top={300} left={300} moveStyle = "boss">
-          <Enemies actor ="boss" />
-        </Boxs>
-        <Boxs speed={20} width={120} height={60} top={450} left={500} moveStyle = "littleBoss">
-          <Enemies actor ="littleBoss"/>
-        </Boxs>
-        <Boxs speed={20} width={200} height={60} top={550} left={300}>
-          <Enemies actor ="evilHand"/>
-        </Boxs>
-        <Boxs width={200} height={60} top={300} left={700}>
-          <Things actor ="spike"/>
-        </Boxs>
-        <Boxs width={400} height={90} top={500} left={700}>
-          <Things actor ="rock"/>
-        </Boxs>
-        <Boxs width={0} height={0} top={700} left={700}>
-          <Things actor ="bone1"/>
-        </Boxs>
-        <Boxs width={0} height={0} top={700} left={800}>
-          <Things actor ="skull"/>
-        </Boxs>
-        <Boxs speed={20} width={90} height={30} top={700} left={850}>
-          <Things actor ="star"/>
-        </Boxs>
-      </GameArea>
+      <Gaming start={games.gaming} gameClear={games.gameClear} />
 
-      <UIArea />
-    </Container>
+      <UIArea time={time} totalTime={TOTAL_TIME} readyTime={readyTime} readyStart={games.readyStart} start={games.gaming} />
+    </>
   );
 }
 

@@ -119,8 +119,13 @@ const ANIMATION = {
   heroDie: [heroDie, ".5s step-start forwards"]
 };
 
-const Hero = ({ animation = "normal" }) => {
-  return <HeroBox animation={ANIMATION[animation]} />;
+const Hero = ({ animation = "normal", color }) => {
+  return (
+    <HeroBox
+      animation={ANIMATION[animation]}
+      style={{ filter: `hue-rotate(${color}deg)` }}
+    />
+  );
 };
 
 export default Hero;

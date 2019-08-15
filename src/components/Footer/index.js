@@ -16,24 +16,12 @@ const FooterWrapper = styled.div`
   left: 0;
   background-image: url(${footer});
   background-repeat-y: no-repeat;
-  animation: ${bgMove} 5s linear infinite;
+  animation: ${bgMove} 5s linear infinite
+    ${props => (props.start ? "running" : "pause")};
 `;
 
-const Bar = styled.div`
-  position: absolute;
-  width: 1280px;
-  height: 60px;
-  bottom: 0;
-  left: 0;
-  background-color: #34213f;
-`;
-
-const Footer = ({ start = "false" }) => {
-  return (
-    <FooterWrapper>
-      <Bar />
-    </FooterWrapper>
-  );
+const Footer = ({ children, start }) => {
+  return <FooterWrapper start={start}>{children}</FooterWrapper>;
 };
 
 export default Footer;

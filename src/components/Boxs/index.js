@@ -1,15 +1,9 @@
 import React, { useState } from "react";
 import styled, { keyframes } from "styled-components";
-import { toRange } from "../../utility";
 
 const moveUp = num => keyframes`
  100% {
     margin-top: ${num}px;
-}
-`;
-const moveLeft = num => keyframes`
- 100% {
-    margin-left: ${num}px;
 }
 `;
 
@@ -57,17 +51,10 @@ const Boxs = ({
   left = 0,
   start = true,
   test = true,
-  area = [0, 200, 0, 200],
+  area = [0, 1280, 0, 800],
   moveStyle = "none"
 }) => {
-  const [position, setPosition] = useState({ top: top, left: left });
-
-let NowTop = top;
-    setInterval(() => {
-      const ranNum = Math.random()*50;
-      console.log("TCL: ranNum", ranNum)
-      NowTop = position.top + ranNum;
-    }, 500);
+  const [position] = useState({ top: top, left: left });
 
   return (
     <BoxsWrapper
@@ -77,7 +64,7 @@ let NowTop = top;
       test={test}
       animation={MOVE_STYLE[moveStyle]}
       style={{
-        top: NowTop,
+        top: position.top,
         left: position.left,
         zIndex: position.top + height
       }}

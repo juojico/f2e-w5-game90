@@ -15,7 +15,9 @@ const BoxWrapper = styled.div`
   ${props => (props.test ? `outline: 1px solid #0f3;` : null)}
   &>div {
     position: absolute;
-    bottom: 6px;
+    bottom: ${props => props.height / 4}px;
+    left: 50%;
+    transform: translate(-50%);
   }
   &::before {
     position: absolute;
@@ -67,7 +69,8 @@ const MoveBox = ({
       test={test}
       style={{
         top: position.top,
-        left: position.left
+        left: position.left,
+        zIndex: position.top + height
       }}
     >
       {children}

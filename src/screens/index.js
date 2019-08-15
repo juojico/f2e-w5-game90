@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import UIArea from "./UIArea.js";
 import MoveBox from "../components/MoveBox";
 import Boxs from "../components/Boxs";
 import Hero from "../components/Hero";
+import Enemies from "../components/Enemies";
+import Things from "../components/Things";
 import Ground from "../components/Ground";
 import Sky from "../components/Sky";
 
@@ -28,12 +31,6 @@ const GameArea = styled.div`
   z-index: 10;
 `;
 
-const UIArea = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  z-index: 30;
-`;
 
 function MainScreen() {
   const [viewW, setViewW] = useState(window.innerWidth / 1280);
@@ -102,14 +99,14 @@ function MainScreen() {
   return (
     <Container style={{ transform: `scale(${viewW})` }}>
       <BgArea>
-        <Sky start="true" />
-        <Ground lineBg="startLine" />
+        <Sky start='true' />
+        <Ground lineBg='startLine' />
       </BgArea>
 
       <GameArea>
-        <Hero animation="heroBuff" />
-        <Hero animation="heroHurt" />
-        <Hero animation="heroDie" />
+        <Hero animation='heroBuff' />
+        <Hero animation='heroHurt' />
+        <Hero animation='heroDie' />
         <MoveBox
           speed={20}
           width={90}
@@ -125,10 +122,33 @@ function MainScreen() {
         >
           <Hero animation={hero.animation} />
         </MoveBox>
-        <Boxs />
+        <Boxs speed={20} width={300} height={120} top={300} left={300} moveStyle = "boss">
+          <Enemies actor ="boss" />
+        </Boxs>
+        <Boxs speed={20} width={120} height={60} top={450} left={500} moveStyle = "littleBoss">
+          <Enemies actor ="littleBoss"/>
+        </Boxs>
+        <Boxs speed={20} width={200} height={60} top={550} left={300}>
+          <Enemies actor ="evilHand"/>
+        </Boxs>
+        <Boxs width={200} height={60} top={300} left={700}>
+          <Things actor ="spike"/>
+        </Boxs>
+        <Boxs width={400} height={90} top={500} left={700}>
+          <Things actor ="rock"/>
+        </Boxs>
+        <Boxs width={0} height={0} top={700} left={700}>
+          <Things actor ="bone1"/>
+        </Boxs>
+        <Boxs width={0} height={0} top={700} left={800}>
+          <Things actor ="skull"/>
+        </Boxs>
+        <Boxs speed={20} width={90} height={30} top={700} left={850}>
+          <Things actor ="star"/>
+        </Boxs>
       </GameArea>
 
-      <UIArea>ui</UIArea>
+      <UIArea />
     </Container>
   );
 }

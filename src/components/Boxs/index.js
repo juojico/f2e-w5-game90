@@ -22,7 +22,7 @@ const BoxsWrapper = styled.div`
   margin-top: ${props => props.height}px;
   background-color: ${props => props.bgColor};
   transform: translate(0, -100%);
-  transition: 0.1s linear;
+  transition: 1s linear;
   animation: ${props => props.animation[0]} ${props => props.animation[1]};
   ${props => (props.test ? `outline: 1px solid #0f3;` : null)}
   &>div {
@@ -62,6 +62,13 @@ const Boxs = ({
 }) => {
   const [position, setPosition] = useState({ top: top, left: left });
 
+let NowTop = top;
+    setInterval(() => {
+      const ranNum = Math.random()*50;
+      console.log("TCL: ranNum", ranNum)
+      NowTop = position.top + ranNum;
+    }, 500);
+
   return (
     <BoxsWrapper
       width={width}
@@ -70,7 +77,7 @@ const Boxs = ({
       test={test}
       animation={MOVE_STYLE[moveStyle]}
       style={{
-        top: position.top,
+        top: NowTop,
         left: position.left,
         zIndex: position.top + height
       }}

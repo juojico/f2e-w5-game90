@@ -15,13 +15,15 @@ const UIAreaWrapper = styled.div`
 `;
 
 const Ready = styled.div`
+  box-sizing: border-box;
   position: absolute;
   display: flex;
   justify-content: center;
   width: 100%;
   height: 100%;
+  padding-top: 160px;
   color: white;
-  font-size: 120px;
+  font-size: 500px;
   background-color: rgba(52, 33, 63, 0.6);
   background-image: url(${imgRule});
   background-size: 100%;

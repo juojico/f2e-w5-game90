@@ -12,17 +12,28 @@ const GameStartWrapper = styled.div`
 `;
 
 const StartImg = styled.div`
-  width: 545px;
-  height: 109px;
+  width: 281px;
+  height: 125px;
   margin: auto;
   margin-bottom: 30px;
   background: url(${uiImg});
-  background-position: -4px -416px;
+  background-position: -190px -132px;
+`;
+
+const StartImg2 = styled.div`
+  float: right;
+  width: 178px;
+  height: 256px;
+  margin: auto 40px auto 20px;
+  background: url(${uiImg});
+  background-position: -4px -132px;
 `;
 
 const GameOver = ({ open, onClick }) => {
   const [close, setClose] = useState(false);
-  if (!open) {
+  if (open && close) {
+    setClose(false);
+  } else {
     setTimeout(() => {
       setClose(true);
     }, 500);
@@ -35,9 +46,10 @@ const GameOver = ({ open, onClick }) => {
             open={open}
             context={DIALOG_GAME_OVER}
             onClick={onClick}
-            btnText="再來一次"
+            btnText='再來一次'
           >
             <StartImg />
+            <StartImg2 />
           </Dialog>
         </GameStartWrapper>
       )}

@@ -20,3 +20,12 @@ export const inRange = (num, min, max) => {
   }
   return false;
 };
+
+export const ranArr = arr => {
+  if (Array.isArray(arr)) {
+    const random = parseInt(Math.random() * arr.length);
+    return arr[random];
+  } else {
+    return arr;
+  }
+};

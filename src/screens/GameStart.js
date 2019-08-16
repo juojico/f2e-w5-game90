@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import Hero from "../components/Hero";
 import Dialog from "../components/Dialog";
 import { uiImg } from "../assets";
 import { DIALOG_START } from "../constants";
@@ -20,9 +21,20 @@ const StartImg = styled.div`
   background-position: -4px -416px;
 `;
 
-const GameStart = ({ open, onClick }) => {
+const StartImg2 = styled.div`
+  width: 0;
+  height: 0;
+  margin-top: 240px;
+  margin-left: 30px;
+  float: left;
+  cursor: pointer;
+`;
+
+const GameStart = ({ open, onClick, heroColor, onClickHero }) => {
   const [close, setClose] = useState(false);
-  if (!open) {
+  if (open && close) {
+    setClose(false);
+  } else {
     setTimeout(() => {
       setClose(true);
     }, 500);
@@ -35,9 +47,12 @@ const GameStart = ({ open, onClick }) => {
             open={open}
             context={DIALOG_START}
             onClick={onClick}
-            btnText="開始遊戲"
+            btnText='開始遊戲'
           >
             <StartImg />
+            <StartImg2 onClick={onClickHero}>
+              <Hero animation={"heroWalk"} color={heroColor} />
+            </StartImg2>
           </Dialog>
         </GameStartWrapper>
       )}

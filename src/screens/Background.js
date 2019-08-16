@@ -10,11 +10,11 @@ const BgArea = styled.div`
   z-index: 1;
 `;
 
-const Background = ({ start }) => {
+const Background = ({ start, time }) => {
   return (
     <BgArea>
       <Sky start={start} />
-      <Ground lineBg="startLine" />
+      <Ground time={time}/>
     </BgArea>
   );
 };

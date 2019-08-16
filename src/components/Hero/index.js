@@ -84,6 +84,7 @@ const heroBuff = keyframes`
 `;
 
 const HeroBox = styled.div`
+  position: relative;
   display: block;
   width: 80px;
   height: 120px;
@@ -102,6 +103,8 @@ const HeroBox = styled.div`
     content: "";
     width: 100%;
     height: 100%;
+    top: 0;
+    left: 0;
     animation-delay: 0.1s;
     opacity: 0.15;
   }
@@ -112,18 +115,19 @@ const HeroBox = styled.div`
 `;
 
 const ANIMATION = {
-  normal: [heroWalk, "1s step-start pause"],
+  normal: [heroWalk, "1s step-start pause forwards"],
   heroWalk: [heroWalk, "1s infinite step-start"],
   heroBuff: [heroBuff, "5s infinite alternate step-start"],
   heroHurt: [heroHurt, ".25s alternate step-start forwards"],
   heroDie: [heroDie, ".5s step-start forwards"]
 };
 
-const Hero = ({ animation = "normal", color }) => {
+const Hero = ({ animation = "normal", color, onClick }) => {
   return (
     <HeroBox
       animation={ANIMATION[animation]}
       style={{ filter: `hue-rotate(${color}deg)` }}
+      onClick={onClick}
     />
   );
 };

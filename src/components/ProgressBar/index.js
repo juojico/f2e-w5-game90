@@ -56,12 +56,12 @@ const TagBoss = bossArr => {
 
 const ProgressBar = ({ time, boss = [30, 50, 70, 80, 85], totalTime }) => {
   const passTime = totalTime - time;
-  const nowAt = Math.round((passTime / totalTime) * 100);
+  const nowAt = ((passTime / totalTime) * 100).toFixed(1);
   return (
     <ProgressBarWrapper time={nowAt}>
       {TagBoss(boss)}
-      <Flag on={nowAt > 33} style={{ left: "33.3%" }} />
-      <Flag on={nowAt > 66} style={{ left: "66.6%" }} />
+      <Flag on={nowAt > 33.3} style={{ left: "33.3%" }} />
+      <Flag on={nowAt > 66.6} style={{ left: "66.6%" }} />
     </ProgressBarWrapper>
   );
 };

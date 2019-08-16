@@ -16,7 +16,7 @@ const BoxsWrapper = styled.div`
   margin-top: ${props => props.height}px;
   background-color: ${props => props.bgColor};
   transform: translate(0, -100%);
-  transition: 1s linear;
+  transition: .5s linear;
   animation: ${props => props.animation[0]} ${props => props.animation[1]};
   ${props => (props.test ? `outline: 1px solid #0f3;` : null)}
   &>div {
@@ -45,33 +45,40 @@ const Boxs = ({
   children,
   width = 10,
   height = 10,
-  speed = 1,
+  speed = 100,
   bgColor = "transparent",
   top = 0,
   left = 0,
   start = true,
   test = true,
-  area = [0, 1280, 0, 800],
   moveStyle = "none"
 }) => {
-  const [position] = useState({ top: top, left: left });
+  const [position, setPosition] = useState({ top: top, left: left });
+  if (start) {
+    setTimeout(() => {
+      setPosition({ ...position, left: position.left - speed });
+    }, 500);
+  }
 
   return (
-    <BoxsWrapper
-      width={width}
-      height={height}
-      bgColor={bgColor}
-      test={test}
-      animation={MOVE_STYLE[moveStyle]}
-      style={{
-        top: position.top,
-        left: position.left,
-        zIndex: position.top + height
-      }}
-    >
-      {children}
-    </BoxsWrapper>
+    <>
+      {position.left + width < 0 ? null : (
+        <BoxsWrapper
+          width={width}
+          height={height}
+          bgColor={bgColor}
+          test={test}
+          animation={MOVE_STYLE[moveStyle]}
+          style={{
+            top: position.top,
+            left: position.left,
+            zIndex: position.top + height
+          }}
+        >
+          {children}
+        </BoxsWrapper>
+      )}
+    </>
   );
 };
-
 export default Boxs;

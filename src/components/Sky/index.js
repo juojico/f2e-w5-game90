@@ -53,7 +53,7 @@ const Mountain2 = styled(bgDefault)`
       : "animation-play-state:paused;"}
 `;
 
-const Sky = ({ children, start = false }) => {
+const Sky = ({ children, start = "false" }) => {
   return (
     <SkyWrapper>
       <Cloud start={start} />

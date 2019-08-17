@@ -26,15 +26,26 @@ const LINE_BG = {
   finishLine: finishLine
 };
 
-const Ground = ({ children, start = false, end = false }) => {
+const Ground = ({ children, start = false, gaming = false, end = false }) => {
   return (
     <GroundWrapper>
-      <MarkingLine
-        lineBg={LINE_BG["startLine"]}
-        style={{
-          left: start ? "-200px" : 0
-        }}
-      />
+      {start || gaming ? (
+        <MarkingLine
+          lineBg={LINE_BG["startLine"]}
+          style={{
+            left: gaming ? "-200px" : 0
+          }}
+        />
+      ) : null}
+      {gaming ? (
+        <MarkingLine
+          lineBg={LINE_BG["finishLine"]}
+          style={{
+            left: end ? "1000px" : "1400px",
+            transition: "4s linear"
+          }}
+        />
+      ) : null}
       {children}
     </GroundWrapper>
   );

@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { things } from "../../assets";
 
 const stitchesSprite = (x = 0, y = 0, width = 0, height = 0) => {
@@ -8,31 +8,22 @@ const stitchesSprite = (x = 0, y = 0, width = 0, height = 0) => {
     height: ${height}px;`;
 };
 
+const moveLeft = keyframes`
+ to {
+   left: -100px;
+ }
+`;
+
 const ThingsBox = styled.div`
+  position: absolute;
   display: block;
   width: 80px;
   height: 120px;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-  &,
-  &::before,
-  &:after {
-    background: url(${things});
-    background-repeat: no-repeat;
-    ${props => props.actor}
-  }
-  &::before,
-  &:after {
-    position: absolute;
-    content: "";
-    width: 100%;
-    height: 100%;
-    animation-delay: 0.1s;
-    opacity: 0.15;
-  }
-  &:after {
-    animation-delay: 0.2s;
-    opacity: 0.05;
-  }
+  background: url(${things});
+  background-repeat: no-repeat;
+  animation: ${props => (props.start ? moveLeft : "none")} 10s linear;
+  ${props => props.actor}
 `;
 
 const spike = stitchesSprite(-342, -4, 130, 120);
@@ -53,8 +44,18 @@ const ACTORS = {
   star2: star2
 };
 
-const Things = ({ actor = "spike" }) => {
-  return <ThingsBox actor={ACTORS[actor]} />;
+const Things = ({ actor = "spike", start, top, left }) => {
+  return (
+    <ThingsBox
+      actor={ACTORS[actor]}
+      start={start ? 1 : 0}
+      style={{
+        top: top,
+        left: left,
+        animationDuration: (left + 100) / 200 + "s"
+      }}
+    />
+  );
 };
 
 export default Things;

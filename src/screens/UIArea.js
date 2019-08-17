@@ -4,7 +4,6 @@ import Timer from "../components/Timer";
 import Footer from "../components/Footer";
 import Tutorial from "../components/Tutorial";
 import ProgressBar from "../components/ProgressBar";
-import { BOSS_POSITOIN } from "../constants";
 import { imgRule } from "../assets";
 
 const UIAreaWrapper = styled.div`
@@ -21,7 +20,7 @@ const Ready = styled.div`
   justify-content: center;
   width: 100%;
   height: 100%;
-  padding-top: 160px;
+  padding-top: 50px;
   color: white;
   font-size: 500px;
   background-color: rgba(52, 33, 63, 0.6);
@@ -37,13 +36,14 @@ const UIArea = ({
   totalTime,
   start = false,
   readyTime,
-  readyStart
+  readyStart,
+  enemies
 }) => {
   return (
     <UIAreaWrapper open={open}>
       <Timer time={time} />
       <Footer start={start}>
-        <ProgressBar time={time} totalTime={totalTime} boss={BOSS_POSITOIN} />
+        <ProgressBar time={time} totalTime={totalTime} boss={enemies} />
       </Footer>
       <Tutorial />
       {readyStart ? <Ready>{readyTime}</Ready> : null}

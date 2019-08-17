@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { uiImg } from "../../assets";
+import { toPercent } from "../../utility";
 
 const ProgressBarWrapper = styled.div`
   position: absolute;
@@ -44,22 +45,25 @@ const Flag = styled.div`
 const TagBoss = bossArr => {
   const bossTags = [];
   const amount = bossArr.length;
-
   for (let i = 0; i < amount; i++) {
     bossTags.push(
       <BossTag key={`tagBoss${i}`} style={{ left: bossArr[i] + "%" }} />
     );
   }
-
   return bossTags;
 };
 
 const ProgressBar = ({ time, boss = [30, 50, 70, 80, 85], totalTime }) => {
   const passTime = totalTime - time;
-  const nowAt = ((passTime / totalTime) * 100).toFixed(1);
+  const nowAt = toPercent(passTime, totalTime);
+
+  const bossArr = boss.map(item => {
+    return toPercent(item, totalTime);
+  });
+
   return (
     <ProgressBarWrapper time={nowAt}>
-      {TagBoss(boss)}
+      {TagBoss(bossArr)}
       <Flag on={nowAt > 33.3} style={{ left: "33.3%" }} />
       <Flag on={nowAt > 66.6} style={{ left: "66.6%" }} />
     </ProgressBarWrapper>

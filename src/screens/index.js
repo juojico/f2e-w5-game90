@@ -5,10 +5,11 @@ import GameOver from "./GameOver";
 import GameStart from "./GameStart";
 import GameClear from "./GameClear";
 import Background from "./Background";
-import { TOTAL_TIME, START_LIFE } from "../constants";
+import { TOTAL_TIME, START_LIFE, OBSTACLES } from "../constants";
+import { generateList } from "../utility";
 
 const defaultState = {
-  time: { total: TOTAL_TIME, now: TOTAL_TIME, readyStart: 0, readyClear: 5 },
+  time: { total: TOTAL_TIME, now: TOTAL_TIME, readyStart: 3, readyClear: 5 },
   games: {
     start: true,
     readyStart: false,
@@ -18,13 +19,49 @@ const defaultState = {
     gameClear: false,
     test: true
   },
-  hero: { animation: "walk", life: START_LIFE, startLife: START_LIFE, color: 0 }
+  hero: {
+    animation: "walk",
+    life: START_LIFE,
+    startLife: START_LIFE,
+    left: 0,
+    top: 200,
+    speed: 20,
+    color: 0
+  },
+  enemies: {
+    enemies1: generateList(OBSTACLES.enemies, 10, 90),
+    enemies2: generateList(OBSTACLES.enemies, 8, 60),
+    enemies3: generateList(OBSTACLES.enemies, 5, 30),
+    bossPosition: []
+  }
 };
 
 function MainScreen() {
   const [time, setTime] = useState({ ...defaultState.time });
   const [games, setGames] = useState({ ...defaultState.games });
   const [hero, setHero] = useState({ ...defaultState.hero });
+  const [enemies, setEnemies] = useState({ ...defaultState.enemies });
+
+  const allboss = () => {
+    const { enemies1: e1, enemies2: e2, enemies3: e3 } = enemies;
+
+    const enemiesPos = arr => {
+      const list = [];
+      for (let i = 0; i < arr.length; i++) {
+        arr[i].forEach(item => {
+          if (item.name !== "evilHand") {
+            list.push(item.game_time + i * 30);
+          }
+        });
+      }
+      return list;
+    };
+
+    const listq = enemiesPos([e1, e2, e3]);
+
+    setEnemies({ ...enemies, bossPosition: listq });
+  };
+  useEffect(allboss, []);
 
   useEffect(() => {
     if (games.gaming) {
@@ -39,7 +76,7 @@ function MainScreen() {
     if (games.readyStart) {
       if (time.readyStart > 0) {
         setTimeout(() => {
-          setTime(time.readyStart - 1);
+          setTime({ ...time, readyStart: time.readyStart - 1 });
         }, 1000);
       } else {
         gameStart();
@@ -48,7 +85,7 @@ function MainScreen() {
     if (games.readyClear) {
       if (time.readyClear > 0) {
         setTimeout(() => {
-          setTime(time.readyClear - 1);
+          setTime({ ...time, readyClear: time.readyClear - 1 });
         }, 1000);
       } else {
         gameClear();
@@ -68,6 +105,7 @@ function MainScreen() {
     setTime({ ...defaultState.time });
     setGames({ ...defaultState.games });
     setHero({ ...defaultState.hero });
+    setEnemies({ ...defaultState.enemies });
   };
 
   const readyClear = () => {
@@ -100,24 +138,26 @@ function MainScreen() {
       <Background
         start={games.gaming}
         gameClear={games.gameClear}
+        gaming={games.gaming}
         end={games.readyClear}
+        time={time.now}
       />
-
       <Gaming
         start={games.gaming}
         time={time.now}
         gameClear={games.gameClear}
-        hero={hero}
+        defaulthero={hero}
         gameOver={gameOver}
+        enemies={enemies}
         test={games.test}
       />
-
       <UIArea
         start={games.gaming}
         time={time.now}
         totalTime={TOTAL_TIME}
-        readyTime={time.readyTime}
+        readyTime={time.readyStart}
         readyStart={games.readyStart}
+        enemies={enemies.bossPosition}
       />
     </>
   );

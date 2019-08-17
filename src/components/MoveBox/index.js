@@ -43,9 +43,11 @@ const MoveBox = ({
   forward = 0,
   start = true,
   test = true,
-  area = [0, 200, 0, 200]
+  area = [0, 200, 0, 200],
+  heroPos
 }) => {
   const [position, setPosition] = useState({ top: top, left: -width });
+  const [move, setMove] = useState(true);
 
   const startPos = () => {
     setPosition({ top: top, left: left });
@@ -53,19 +55,24 @@ const MoveBox = ({
 
   useEffect(startPos, []);
 
-  if (start) {
-    setTimeout(() => {
-      setPosition({
-        ...position,
-        top: toRange(position.top + speed * (down - up), area[2], area[3]),
-        left: toRange(
-          position.left + speed * (forward - backward),
-          area[0],
-          area[1]
-        )
-      });
-    }, 100);
-  }
+  const setPos = () => {
+    if (start) {
+      setTimeout(() => {
+        setPosition({
+          top: toRange(position.top + speed * (down - up), area[2], area[3]),
+          left: toRange(
+            position.left + speed * (forward - backward),
+            area[0],
+            area[1]
+          )
+        });
+        setMove(!move);
+        heroPos(position);
+      }, 100);
+    }
+  };
+
+  useEffect(setPos, [up, down, backward, forward, move]);
 
   return (
     <BoxWrapper

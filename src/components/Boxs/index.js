@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 
 const moveUp = num => keyframes`
@@ -16,7 +16,7 @@ const BoxsWrapper = styled.div`
   margin-top: ${props => props.height}px;
   background-color: ${props => props.bgColor};
   transform: translate(0, -100%);
-  transition: .5s linear;
+  transition: 0.5s linear;
   animation: ${props => props.animation[0]} ${props => props.animation[1]};
   ${props => (props.test ? `outline: 1px solid #0f3;` : null)}
   &>div {
@@ -49,20 +49,31 @@ const Boxs = ({
   bgColor = "transparent",
   top = 0,
   left = 0,
-  start = true,
-  test = true,
+  test = false,
   moveStyle = "none"
 }) => {
-  const [position, setPosition] = useState({ top: top, left: left });
-  if (start) {
-    setTimeout(() => {
-      setPosition({ ...position, left: position.left - speed });
-    }, 500);
-  }
+  const [position, setPosition] = useState([top, left]);
+  const [move, setMove] = useState(false);
+  const [close, setClose] = useState(false);
+
+  const moving = () => {
+    const inSide = position[1] + 2 * width > 0;
+    const next = position[1] - speed;
+    if (inSide) {
+      setTimeout(() => {
+        setPosition([top, next]);
+        setMove(!move);
+      }, 500);
+    } else {
+      setClose(true);
+    }
+  };
+
+  useEffect(moving, [move]);
 
   return (
     <>
-      {position.left + width < 0 ? null : (
+      {close ? null : (
         <BoxsWrapper
           width={width}
           height={height}
@@ -70,9 +81,9 @@ const Boxs = ({
           test={test}
           animation={MOVE_STYLE[moveStyle]}
           style={{
-            top: position.top,
-            left: position.left,
-            zIndex: position.top + height
+            top: position[0],
+            left: position[1],
+            zIndex: position[0] + height
           }}
         >
           {children}

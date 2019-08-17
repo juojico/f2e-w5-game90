@@ -5,46 +5,53 @@ import GameOver from "./GameOver";
 import GameStart from "./GameStart";
 import GameClear from "./GameClear";
 import Background from "./Background";
-import { TOTAL_TIME } from "../constants";
-
-const heroRanColor = () => Math.round(Math.random() * 11) * 30;
+import { TOTAL_TIME, START_LIFE } from "../constants";
 
 const defaultState = {
-  time: TOTAL_TIME,
-  readyTime: 0,
+  time: { total: TOTAL_TIME, now: TOTAL_TIME, readyStart: 0, readyClear: 5 },
   games: {
     start: true,
     readyStart: false,
     gaming: false,
     gameOver: false,
-    gameClear: false
+    readyClear: false,
+    gameClear: false,
+    test: true
   },
-  heroRanColor
+  hero: { animation: "walk", life: START_LIFE, startLife: START_LIFE, color: 0 }
 };
 
 function MainScreen() {
-  const [time, setTime] = useState(defaultState.time);
-  const [readyTime, setReadyTime] = useState(defaultState.readyTime);
+  const [time, setTime] = useState({ ...defaultState.time });
   const [games, setGames] = useState({ ...defaultState.games });
-  const [heroColor, setHeroColor] = useState(defaultState.heroRanColor);
+  const [hero, setHero] = useState({ ...defaultState.hero });
 
   useEffect(() => {
     if (games.gaming) {
-      if (time > 0) {
+      if (time.now > 0) {
         setTimeout(() => {
-          setTime(time - 1);
+          setTime({ ...time, now: time.now - 1 });
         }, 1000);
       } else {
-        gameClear();
+        readyClear();
       }
     }
     if (games.readyStart) {
-      if (readyTime > 0) {
+      if (time.readyStart > 0) {
         setTimeout(() => {
-          setReadyTime(readyTime - 1);
+          setTime(time.readyStart - 1);
         }, 1000);
       } else {
         gameStart();
+      }
+    }
+    if (games.readyClear) {
+      if (time.readyClear > 0) {
+        setTimeout(() => {
+          setTime(time.readyClear - 1);
+        }, 1000);
+      } else {
+        gameClear();
       }
     }
   });
@@ -58,11 +65,17 @@ function MainScreen() {
   };
 
   const gameReStartGame = () => {
-    setGames({ ...games, start: true, gaming: false });
+    setTime({ ...defaultState.time });
+    setGames({ ...defaultState.games });
+    setHero({ ...defaultState.hero });
+  };
+
+  const readyClear = () => {
+    setGames({ ...games, readyClear: true });
   };
 
   const gameClear = () => {
-    setGames({ ...games, gaming: false, gameClear: true });
+    setGames({ ...games, gaming: false, readyClear: false, gameClear: true });
   };
 
   const gameOver = () => {
@@ -70,8 +83,8 @@ function MainScreen() {
   };
 
   const onClickHero = () => {
-    console.log("TCL: onClickHero -> onClickHero");
-    setHeroColor(heroRanColor);
+    const heroRanColor = () => Math.round(Math.random() * 11) * 30;
+    setHero({ ...hero, color: heroRanColor() });
   };
 
   return (
@@ -79,7 +92,7 @@ function MainScreen() {
       <GameStart
         open={games.start}
         onClick={gameReadyStart}
-        heroColor={heroColor}
+        heroColor={hero.color}
         onClickHero={onClickHero}
       />
       <GameOver open={games.gameOver} onClick={gameReStartGame} />
@@ -87,23 +100,24 @@ function MainScreen() {
       <Background
         start={games.gaming}
         gameClear={games.gameClear}
-        time={time}
+        end={games.readyClear}
       />
 
       <Gaming
         start={games.gaming}
+        time={time.now}
         gameClear={games.gameClear}
-        heroColor={heroColor}
+        hero={hero}
         gameOver={gameOver}
-        time={time}
+        test={games.test}
       />
 
       <UIArea
-        time={time}
-        totalTime={TOTAL_TIME}
-        readyTime={readyTime}
-        readyStart={games.readyStart}
         start={games.gaming}
+        time={time.now}
+        totalTime={TOTAL_TIME}
+        readyTime={time.readyTime}
+        readyStart={games.readyStart}
       />
     </>
   );

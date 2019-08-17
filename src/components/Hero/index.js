@@ -8,7 +8,7 @@ const stitchesSprite = (x = 0, y = 0, width = 0, height = 0) => {
     height: ${height}px;`;
 };
 
-const heroWalk = keyframes`
+const walk = keyframes`
  0% {
     ${stitchesSprite(-5, -405, 80, 120)}
 }
@@ -26,7 +26,7 @@ const heroWalk = keyframes`
 }
 `;
 
-const heroHurt = keyframes`
+const hurt = keyframes`
  0% {
     ${stitchesSprite(-350, -377, 90, 119)}
 }
@@ -44,7 +44,7 @@ const heroHurt = keyframes`
 }
 `;
 
-const heroDie = keyframes`
+const die = keyframes`
  0% {
     ${stitchesSprite(-5, -245, 95, 123)}
 }
@@ -62,7 +62,7 @@ const heroDie = keyframes`
 }
 `;
 
-const heroBuff = keyframes`
+const buff = keyframes`
  0% {
     ${stitchesSprite(-5, -5, 84, 122)}
 }
@@ -115,11 +115,11 @@ const HeroBox = styled.div`
 `;
 
 const ANIMATION = {
-  normal: [heroWalk, "1s step-start pause forwards"],
-  heroWalk: [heroWalk, "1s infinite step-start"],
-  heroBuff: [heroBuff, "5s infinite alternate step-start"],
-  heroHurt: [heroHurt, ".25s alternate step-start forwards"],
-  heroDie: [heroDie, ".5s step-start forwards"]
+  normal: [walk, "1s step-start pause forwards"],
+  walk: [walk, "1s infinite step-start"],
+  buff: [buff, "5s infinite alternate step-start"],
+  hurt: [hurt, ".25s alternate step-start forwards"],
+  die: [die, ".5s step-start forwards"]
 };
 
 const Hero = ({ animation = "normal", color, onClick }) => {

@@ -20,28 +20,38 @@ export const GAME_SPEED = 1;
 export const BOSS_POSITOIN = [20, 30, 40, 50, 60, 75, 80, 85];
 
 export const OBSTACLES = {
-  enemies: ["boss", "littleBoss"],
-  obs: ["spike", "rock", "evilHand"],
-  bg: ["bone1", "bone2", "skull"]
+  enemies: ["boss", "littleBoss", "evilHand"],
+  things: ["spike", "rock", "bone1", "bone2", "skull", "star"]
 };
 
 export const RECENT_PLAYER = [
   {
-    name: "RECENT_PLAYER1",
+    id: 1565980564132,
+    name: "RECENT PLAYER",
+    time: "2019/08/15 23:03:01",
+    game_time: 3,
+    top: 200,
+    color: 30
+  },
+  {
+    id: 1565980564153,
+    name: "RECENT PLAYER1",
     time: "2019/08/15 23:03:19",
     game_time: 30,
     top: 200,
     color: 30
   },
   {
-    name: "RECENT_PLAYER2",
+    id: 1565980564806,
+    name: "RECENT PLAYER2",
     time: "2019/08/15 23:13:39",
     game_time: 90,
     top: 300,
     color: 0
   },
   {
-    name: "RECENT_PLAYER3",
+    id: 1565980563492,
+    name: "RECENT PLAYER3",
     time: "2019/08/15 23:35:14",
     game_time: 15,
     top: 0,

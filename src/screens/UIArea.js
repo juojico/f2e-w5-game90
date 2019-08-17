@@ -31,7 +31,14 @@ const Ready = styled.div`
   background-repeat: no-repeat;
 `;
 
-const UIArea = ({ open, time, totalTime, start, readyTime, readyStart }) => {
+const UIArea = ({
+  open,
+  time,
+  totalTime,
+  start = false,
+  readyTime,
+  readyStart
+}) => {
   return (
     <UIAreaWrapper open={open}>
       <Timer time={time} />

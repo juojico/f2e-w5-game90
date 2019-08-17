@@ -51,7 +51,7 @@ const GameStart = ({ open, onClick, heroColor, onClickHero }) => {
           >
             <StartImg />
             <StartImg2 onClick={onClickHero}>
-              <Hero animation={"heroWalk"} color={heroColor} />
+              <Hero animation={"walk"} color={heroColor} />
             </StartImg2>
           </Dialog>
         </GameStartWrapper>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { toRange } from "../../utility";
 
@@ -45,7 +45,13 @@ const MoveBox = ({
   test = true,
   area = [0, 200, 0, 200]
 }) => {
-  const [position, setPosition] = useState({ top: top, left: left });
+  const [position, setPosition] = useState({ top: top, left: -width });
+
+  const startPos = () => {
+    setPosition({ top: top, left: left });
+  };
+
+  useEffect(startPos, []);
 
   if (start) {
     setTimeout(() => {

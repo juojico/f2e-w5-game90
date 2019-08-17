@@ -7,14 +7,15 @@ const BgArea = styled.div`
   position: absolute;
   width: 100%;
   height: 100%;
+  overflow: hidden;
   z-index: 1;
 `;
 
-const Background = ({ start, time }) => {
+const Background = ({ start=false, end }) => {
   return (
     <BgArea>
-      <Sky start={start} />
-      <Ground time={time}/>
+      <Sky start={start} end={end} />
+      <Ground start={start} end={end}/>
     </BgArea>
   );
 };

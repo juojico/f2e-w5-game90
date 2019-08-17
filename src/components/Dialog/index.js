@@ -48,7 +48,7 @@ const Footer = styled.div`
   transform: translate(-50%);
 `;
 
-const Dialog = ({ children, open, context, onClick, btnText, type2 }) => {
+const Dialog = ({ children, open, context, onClick, btnText }) => {
   return (
     <DialogWrapper open={open}>
       <DialogBox open={open}>

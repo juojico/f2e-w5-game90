@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Boxs from "../components/Boxs";
 import Hero from "../components/Hero";
@@ -7,13 +7,14 @@ import Heart from "../components/Heart";
 import Things from "../components/Things";
 import Enemies from "../components/Enemies";
 import MoveBox from "../components/MoveBox";
-import { START_LIFE, OBSTACLES } from "../constants";
-import { ranArr, inRange } from "../utility";
+import { OBSTACLES, RECENT_PLAYER } from "../constants";
+import { generateList } from "../utility";
 
 const GamingWrapper = styled.div`
   position: absolute;
   width: 100%;
   height: 100%;
+  overflow: hidden;
   z-index: 10;
 `;
 
@@ -24,12 +25,40 @@ const GameArea = styled.div`
   top: 300px;
 `;
 
-const Gaming = ({ start, heroColor, time }) => {
-  const [listen, setListen] = useState(true);
-  const [hero, setHero] = useState({
-    animation: "normal",
-    life: START_LIFE
-  });
+const enemies = generateList(OBSTACLES.enemies, 10, 80);
+
+const BoxArea = ({ data, type = "things", test }) => {
+  const types = (item, type) => {
+    switch (type) {
+      case "things":
+        return <Things actor={item.name} />;
+      case "enemies":
+        return <Enemies actor={item.name} />;
+      case "tomb":
+        return <Tomb name={item.name} time={item.time} />;
+      default:
+        break;
+    }
+  };
+  return (
+    <>
+      {data.map(item => (
+        <Boxs
+          key={item.id}
+          width={200}
+          height={60}
+          top={item.top}
+          left={1280 + item.game_time * 200}
+          test={test}
+        >
+          {types(item, type)}
+        </Boxs>
+      ))}
+    </>
+  );
+};
+
+const Gaming = ({ start = false, hero, time, test }) => {
   const [moving, setMoving] = useState({
     start: false,
     up: 0,
@@ -37,7 +66,18 @@ const Gaming = ({ start, heroColor, time }) => {
     backward: 0,
     forward: 0
   });
-  const [obsIndex, setObsIndex] = useState({ boss: 0, tomb: 0 });
+
+  const listener = () => {
+    if (start) {
+      document.addEventListener("keydown", handleKey);
+      document.addEventListener("keyup", handleKey);
+    } else {
+      document.removeEventListener("keydown", handleKey);
+      document.removeEventListener("keyup", handleKey);
+    }
+  };
+
+  useEffect(listener, [start]);
 
   const whichDirect = keyCode => {
     switch (keyCode) {
@@ -64,12 +104,10 @@ const Gaming = ({ start, heroColor, time }) => {
     switch (e.type) {
       case "keydown":
         setMoving({ ...moving, start: true, [keyName]: 1 });
-        setHero({ ...hero, animation: "heroWalk" });
         console.log("TCL: MainScreen -> movingkeydown", moving);
         break;
       case "keyup":
         setMoving({ ...moving, start: false, [keyName]: 0 });
-        setHero({ ...hero, animation: "normal" });
         console.log("TCL: MainScreen -> movingkeyup", moving);
         break;
 
@@ -79,108 +117,49 @@ const Gaming = ({ start, heroColor, time }) => {
     }
   };
 
+  const [obstacles1, setObstacles1] = useState([]);
+  const [obstacles2, setObstacles2] = useState([]);
+
+  //每10秒產生一組障礙物列表
+  useEffect(() => {
+    if (time % 20 === 19) {
+      const list = generateList(OBSTACLES.things, 5, 10, time);
+      setObstacles1(list);
+    } else if (time % 20 === 9) {
+      const list = generateList(OBSTACLES.things, 5, 10, time);
+      setObstacles2(list);
+    }
+  }, [time]);
+
   console.log("TCL: MainScreen", moving);
-
-  if (start && listen) {
-    setListen(false);
-    document.addEventListener("keydown", handleKey);
-    document.addEventListener("keyup", handleKey);
-  }
-
-  const obstacles = [
-    { name: "spike",game_time: 1, power: 1 },
-    { name: "rock" ,game_time: 3, power: 1 },
-    { name: "evilHand" ,game_time: 4, power: 1 },
-    { name: "spike" ,game_time: 5, power: 1 },
-    { name: "rock" ,game_time: 6, power: 1 }
-  ];
-
-  const isTouch = obstacles => {
-    // 檢查碰撞
-    // inRange(num, min, max)
-  };
-
-  const generateThings = obstacles => {
-    // 生成背景物件
-  };
-
-  const generateEnemies = obstacles => {
-    // 生成敵人
-  };
-
-  const generateObstacles = time => {
-    // const thisObs = ranArr(OBSTACLES.obs);
-    // if (time % 10) {
-    //   return (
-    //     <Boxs width={200} height={60} top={200} left={1280}>
-    //       <Things actor={thisObs} />
-    //     </Boxs>
-    //   );
-    // }
-  };
 
   return (
     <GamingWrapper>
-      <Heart amount={START_LIFE} life={hero.life} />
+      <Heart amount={hero.startLife} life={hero.life} />
       <GameArea>
-        {obstacles.map(item => (
-          <Boxs
-            width={200}
-            height={60}
-            top={200}
-            left={1280 + item.game_time}
-          >
-            <Things actor={item.name} />
-          </Boxs>
-        ))}
-        <MoveBox
-          speed={20}
-          width={90}
-          height={24}
-          top={200}
-          left={50}
-          up={moving.up}
-          down={moving.down}
-          backward={moving.backward}
-          forward={moving.forward}
-          area={[0, 800, 300, 700]}
-          start={moving.start}
-        >
-          <Hero animation={hero.animation} color={heroColor} />
-        </MoveBox>
-        <Boxs width={0} height={120} top={0} left={300} moveStyle='boss'>
-          <Enemies actor='boss' />
-        </Boxs>
-        <Boxs
-          width={120}
-          height={60}
-          top={150}
-          left={500}
-          moveStyle='littleBoss'
-        >
-          <Enemies actor='littleBoss' />
-        </Boxs>
-        <Boxs width={200} height={60} top={250} left={300}>
-          <Enemies actor='evilHand' />
-        </Boxs>
-        <Boxs width={200} height={60} top={0} left={700}>
-          <Things actor='spike' />
-        </Boxs>
-        <Boxs width={400} height={90} top={200} left={700}>
-          <Things actor='rock' />
-        </Boxs>
-        <Boxs width={0} height={0} top={400} left={700}>
-          <Things actor='bone1' />
-        </Boxs>
-        <Boxs width={0} height={0} top={400} left={800}>
-          <Things actor='skull' />
-        </Boxs>
-        <Boxs width={90} height={30} top={400} left={850}>
-          <Things actor='star' />
-        </Boxs>
-        <Boxs width={180} height={60} top={0} left={950}>
-          <Tomb name='Player Name' time='2019/08/16 23:12:08' />
-        </Boxs>
+        {start ? (
+          <>
+            <BoxArea data={obstacles1} test={test} />
+            <BoxArea data={obstacles2} test={test} />
+            <BoxArea data={RECENT_PLAYER} type={"tomb"} test={test} />
+            <BoxArea data={enemies} type={"enemies"} test={test} />
+            <MoveBox
+              speed={20}
+              width={90}
+              height={24}
+              top={200}
+              up={moving.up}
+              down={moving.down}
+              backward={moving.backward}
+              forward={moving.forward}
+              area={[0, 800, 0, 400]}
+              start={moving.start}
+              test={test}
+            >
+              <Hero animation={hero.animation} color={hero.color} />
+            </MoveBox>
+          </>
+        ) : null}
       </GameArea>
     </GamingWrapper>
   );

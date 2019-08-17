@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "eslint-plugin-react-hooks": "^1.7.0",
     "firebase-tools": "^7.2.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",

@@ -21,7 +21,7 @@ const FooterWrapper = styled.div`
 `;
 
 const Footer = ({ children, start }) => {
-  return <FooterWrapper start={start}>{children}</FooterWrapper>;
+  return <FooterWrapper start={start?1:0}>{children}</FooterWrapper>;
 };
 
 export default Footer;

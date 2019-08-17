@@ -1,3 +1,4 @@
+//數字限制在範圍內
 export const toRange = (num, min, max) => {
   if (typeof num !== "number") {
     return 0;
@@ -11,7 +12,8 @@ export const toRange = (num, min, max) => {
   return num;
 };
 
-export const inRange = (num, min, max) => {
+//判斷數字是否在範圍內
+export const isInRange = (num, min, max) => {
   if (typeof num !== "number") {
     return false;
   }
@@ -21,10 +23,38 @@ export const inRange = (num, min, max) => {
   return false;
 };
 
+//隨機抽取陣列中一項
 export const ranArr = arr => {
   if (Array.isArray(arr)) {
-    const random = parseInt(Math.random() * arr.length);
+    const random = Math.round(Math.random() * arr.length);
     return arr[random];
+  } else {
+    return arr;
+  }
+};
+
+//產生物件列表
+export const generateList = (
+  arr,
+  amount = 0,
+  totalTime = 1,
+  time = 0,
+  maxTop = 400
+) => {
+  if (Array.isArray(arr)) {
+    const list = [];
+    for (let i = 0; i < amount; i++) {
+      const thisObs = ranArr(arr);
+      const top = Math.round(Math.random() * maxTop);
+      const space = Math.round(totalTime / (amount + 1));
+      list.push({
+        id: time + i,
+        name: thisObs,
+        game_time: i * space,
+        top: top
+      });
+    }
+    return list;
   } else {
     return arr;
   }

@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { uiImg } from "../../assets";
+import { uiImg, hero } from "../../assets";
 
 const TombWrapper = styled.div`
   position: absolute;
@@ -41,7 +41,18 @@ const TombText = styled.div`
       : null}
 `;
 
-const Tomb = ({ top, left, name, time }) => {
+const Hero = styled.div`
+  position: absolute;
+  top: 152px;
+  left: 53px;
+  width: 125px;
+  height: 105px;
+  background: url(${hero});
+  background-repeat: no-repeat;
+  background-position: -215px -377px;
+`;
+
+const Tomb = ({ top, left, name, time, color }) => {
   return (
     <TombWrapper
       style={{
@@ -49,6 +60,7 @@ const Tomb = ({ top, left, name, time }) => {
         left: left
       }}
     >
+      <Hero style={{ filter: `hue-rotate(${color}deg)` }} />
       <TombText>{name}</TombText>
       <TombText time>{time}</TombText>
     </TombWrapper>

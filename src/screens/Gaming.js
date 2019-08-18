@@ -1,11 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
-import Boxs from "../components/Boxs";
 import Hero from "../components/Hero";
-import Tomb from "../components/Tomb";
+import BoxArea from "./GamingBoxArea";
 import Heart from "../components/Heart";
-import Things from "../components/Things";
-import Enemies from "../components/Enemies";
 import MoveBox from "../components/MoveBox";
 import { RECENT_PLAYER } from "../constants";
 import { generateList } from "../utility";
@@ -25,41 +22,15 @@ const GameArea = styled.div`
   top: 300px;
 `;
 
-const BoxArea = ({ data, type = "things", keyName, heroPos, crash, test }) => {
-  const types = (item, type) => {
-    switch (type) {
-      case "things":
-        return <Things actor={item.name} />;
-      case "enemies":
-        return <Enemies actor={item.name} />;
-      case "tomb":
-        return <Tomb name={item.name} time={item.time} />;
-      default:
-        break;
-    }
-  };
-  return (
-    <>
-      {data.map(item => (
-        <Boxs
-          key={keyName + item.id}
-          width={200}
-          height={60}
-          top={item.top}
-          left={1280 + item.game_time * 200}
-          actor={item.name}
-          heroPos={heroPos}
-          crash={crash}
-          test={test}
-        >
-          {types(item, type)}
-        </Boxs>
-      ))}
-    </>
-  );
-};
-
-const Gaming = ({ start = false, defaulthero, time, enemies, gameOver, test }) => {
+const Gaming = ({
+  start = false,
+  defaulthero,
+  time,
+  enemies,
+  gameOver,
+  readyClear,
+  test
+}) => {
   const [hero, setHero] = useState({ ...defaulthero });
   const [heroHurt, setHeroHurt] = useState(false);
   const [moving, setMoving] = useState({
@@ -69,8 +40,13 @@ const Gaming = ({ start = false, defaulthero, time, enemies, gameOver, test }) =
     backward: 0,
     forward: 0
   });
+  const [invincible, setInvincible] = useState(false);
 
-  const listener = () => {
+  const [star, setStar] = useState([]);
+
+  const onStart = () => {
+    setHero({ ...defaulthero });
+    setStar(generateList(["star"], 2, 80));
     if (start) {
       document.addEventListener("keydown", handleKey);
       document.addEventListener("keyup", handleKey);
@@ -80,7 +56,16 @@ const Gaming = ({ start = false, defaulthero, time, enemies, gameOver, test }) =
     }
   };
 
-  useEffect(listener, [start]);
+  useEffect(onStart, [start]);
+
+  const removelistener = () => {
+    if (readyClear) {
+      document.removeEventListener("keydown", handleKey);
+      document.removeEventListener("keyup", handleKey);
+    }
+  };
+
+  useEffect(removelistener, [readyClear]);
 
   const whichDirect = keyCode => {
     switch (keyCode) {
@@ -101,15 +86,15 @@ const Gaming = ({ start = false, defaulthero, time, enemies, gameOver, test }) =
     }
   };
 
-  const handleKey = e => {
+  const handleKey = useCallback(e => {
     const keyName = whichDirect(e.keyCode);
 
     if (e.type === "keydown") {
-      setMoving({ ...moving, start: true, [keyName]: 1 });
+      setMoving(moving => ({ ...moving, start: true, [keyName]: 1 }));
     } else if (e.type === "keyup") {
-      setMoving({ ...moving, start: false, [keyName]: 0 });
+      setMoving(moving => ({ ...moving, start: false, [keyName]: 0 }));
     }
-  };
+  }, []);
 
   const [obstacles1, setObstacles1] = useState([]);
   const [obstacles2, setObstacles2] = useState([]);
@@ -154,38 +139,43 @@ const Gaming = ({ start = false, defaulthero, time, enemies, gameOver, test }) =
     }
   }, [time]);
 
-  const heroHurting = () => {
-    if (heroHurt) {
-      setTimeout(() => {
-        setHero({ ...hero, animation: "walk" });
-        setHeroHurt(false);
-      }, 500);
-      setHero({ ...hero, animation: "hurt" });
-    }
-  };
-
-  useEffect(heroHurting, [heroHurt]);
-
-  const heroPos = heroPosition => {
-    setHero({ ...hero, ...heroPosition });
-  };
+  const heroPos = useCallback(heroPosition => {
+    setHero(hero => ({ ...hero, ...heroPosition }));
+  }, []);
 
   const crash = power => {
-    console.log("TCL: Gaming -> onCrash = power", power);
-    setHero({ ...hero, life: hero.life - power });
-    setHeroHurt(true);
-  };
-
-  const isHeroDie = () => {
-    if (hero.life <= 0) {
-      setHero({ ...hero, animation: "die" });
-      setTimeout(() => {
-        gameOver();
-      }, 1000);
+    if (!invincible) {
+      if (power === "star") {
+        setHero(hero => ({ ...hero, animation: "buff" }));
+        setTimeout(() => {
+          setHero(hero => ({ ...hero, animation: "walk" }));
+          setInvincible(false);
+        }, 10000);
+        setInvincible(true);
+      } else {
+        const heroLifeNow = hero.life - power;
+        setHero(hero => ({ ...hero, life: heroLifeNow, animation: "hurt" }));
+        if (heroLifeNow <= 0) {
+          setTimeout(() => {
+            setHero(hero => ({ ...hero, animation: "die" }));
+            setHeroHurt(false);
+            setInvincible(false);
+            setTimeout(() => {
+              gameOver();
+            }, 1000);
+          }, 500);
+        } else {
+          setTimeout(() => {
+            setHero(hero => ({ ...hero, animation: "walk" }));
+            setHeroHurt(false);
+            setInvincible(false);
+          }, 500);
+        }
+        setHeroHurt(true);
+        setInvincible(true);
+      }
     }
   };
-
-  useEffect(isHeroDie, [hero]);
 
   return (
     <GamingWrapper>
@@ -194,10 +184,19 @@ const Gaming = ({ start = false, defaulthero, time, enemies, gameOver, test }) =
         {start ? (
           <>
             <BoxArea
+              data={star}
+              keyName={"star"}
+              heroPos={[hero.top, hero.left]}
+              crash={crash}
+              invincible={invincible}
+              test={test}
+            />
+            <BoxArea
               data={obstacles1}
               keyName={"obstacles1"}
               heroPos={[hero.top, hero.left]}
               crash={crash}
+              invincible={invincible}
               test={test}
             />
             <BoxArea
@@ -205,6 +204,7 @@ const Gaming = ({ start = false, defaulthero, time, enemies, gameOver, test }) =
               keyName={"obstacles2"}
               heroPos={[hero.top, hero.left]}
               crash={crash}
+              invincible={invincible}
               test={test}
             />
             <BoxArea
@@ -213,6 +213,7 @@ const Gaming = ({ start = false, defaulthero, time, enemies, gameOver, test }) =
               keyName={"tomb"}
               heroPos={[hero.top, hero.left]}
               crash={crash}
+              invincible={invincible}
               test={test}
             />
             <BoxArea
@@ -221,6 +222,7 @@ const Gaming = ({ start = false, defaulthero, time, enemies, gameOver, test }) =
               keyName={"enemies1"}
               heroPos={[hero.top, hero.left]}
               crash={crash}
+              invincible={invincible}
               test={test}
             />
             {stage >= 1 ? (
@@ -230,6 +232,7 @@ const Gaming = ({ start = false, defaulthero, time, enemies, gameOver, test }) =
                 keyName={"enemies2"}
                 heroPos={[hero.top, hero.left]}
                 crash={crash}
+                invincible={invincible}
                 test={test}
               />
             ) : null}
@@ -240,11 +243,12 @@ const Gaming = ({ start = false, defaulthero, time, enemies, gameOver, test }) =
                 keyName={"enemies3"}
                 heroPos={[hero.top, hero.left]}
                 crash={crash}
+                invincible={invincible}
                 test={test}
               />
             ) : null}
             <MoveBox
-              speed={30}
+              speed={40}
               width={90}
               height={24}
               top={200}
@@ -256,6 +260,7 @@ const Gaming = ({ start = false, defaulthero, time, enemies, gameOver, test }) =
               start={moving.start}
               heroPos={heroPos}
               heroHurt={heroHurt}
+              readyClear={readyClear}
               test={test}
             >
               <Hero animation={hero.animation} color={hero.color} />

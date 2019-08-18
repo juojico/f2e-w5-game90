@@ -63,3 +63,16 @@ export const generateList = (arr, amount = 0, totalTime = 1, maxTop = 400) => {
     return arr;
   }
 };
+
+//更新敵人位置列表
+export const allBossPos = arr => {
+  const list = [];
+  for (let i = 0; i < arr.length; i++) {
+    arr[i].forEach(item => {
+      if (item.name !== "evilHand") {
+        list.push(item.game_time + i * 30);
+      }
+    });
+  }
+  return list;
+};

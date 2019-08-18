@@ -55,7 +55,8 @@ const Boxs = ({
   actor = "none",
   heroPos = [200, 200],
   heroSize = [24, 90],
-  crash
+  crash,
+  invincible
 }) => {
   const [position, setPosition] = useState([top, left]);
   const [size, setSize] = useState([width, height]);
@@ -86,7 +87,7 @@ const Boxs = ({
       case "skull":
         return setSize([40, 20]);
       case "star":
-        return setSize([60, 30]);
+        return setSize([60, 40]);
       case "tomb":
         return setSize([180, 60]);
 
@@ -107,6 +108,8 @@ const Boxs = ({
         return setPower(1);
       case "spike":
         return setPower(1);
+      case "star":
+        return setPower("star");
 
       default:
         return setPower(0);
@@ -122,8 +125,8 @@ const Boxs = ({
     if (inSide) {
       setTimeout(() => {
         setPosition([nextTop, nextLeft]);
-        setCount(count + 1);
-        setMove(!move);
+        setCount(prevCount => prevCount + 1);
+        setMove(prevMove => !prevMove);
       }, 500);
     } else {
       setClose(true);
@@ -133,28 +136,29 @@ const Boxs = ({
   useEffect(moving, [move]);
 
   const checkImpact = () => {
-    setTimeout(() => {
-      const boxT = position[0];
-      const boxL = position[1];
-      const boxH = size[1];
-      const boxW = size[0];
-      const heroT = heroPos[0];
-      const heroL = heroPos[1];
-      const heroH = heroSize[0];
-      const heroW = heroSize[1];
-      if (boxL < 800) {
-        if (isInRange(boxT, heroT - boxH, heroT + heroH)) {
-          if (isInRange(boxL, heroL - boxW, heroL + heroW)) {
-            console.log("TCL: checkImpact -> checkImpact", "crash", actor);
-            crash(power);
-            return false;
+    if (!close) {
+      setTimeout(() => {
+        if (position[1] < 800 && !invincible) {
+          const boxT = position[0];
+          const boxL = position[1];
+          const minT = heroPos[0] - size[1];
+          const maxT = heroPos[0] + heroSize[0];
+          const minL = heroPos[1] - size[0];
+          const maxL = heroPos[1];
+
+          if (isInRange(boxT, minT, maxT)) {
+            if (isInRange(boxL, minL, maxL)) {
+              console.log("TCL: checkImpact -> checkImpact", "crash", actor);
+              crash(power);
+              if (actor === "star") {
+                setClose(true);
+              }
+            }
           }
         }
-      } else if (boxL < -100) {
-        return false;
-      }
-      setCheck(!check);
-    }, 300);
+        setCheck(prevCheck => !prevCheck);
+      }, 100);
+    }
   };
 
   useEffect(checkImpact, [check]);

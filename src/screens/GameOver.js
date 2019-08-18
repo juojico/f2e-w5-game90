@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Dialog from "../components/Dialog";
+import Tomb from "../components/Tomb";
 import { uiImg } from "../assets";
 import { DIALOG_GAME_OVER } from "../constants";
 
@@ -20,16 +21,14 @@ const StartImg = styled.div`
   background-position: -190px -132px;
 `;
 
-const StartImg2 = styled.div`
+const TombBox = styled.div`
   float: right;
   width: 178px;
   height: 256px;
   margin: auto 40px auto 20px;
-  background: url(${uiImg});
-  background-position: -4px -132px;
 `;
 
-const GameOver = ({ open, onClick }) => {
+const GameOver = ({ open, onClick, heroColor,dieTime }) => {
   const [close, setClose] = useState(false);
   if (open && close) {
     setClose(false);
@@ -46,10 +45,12 @@ const GameOver = ({ open, onClick }) => {
             open={open}
             context={DIALOG_GAME_OVER}
             onClick={onClick}
-            btnText='再來一次'
+            btnText="再來一次"
           >
             <StartImg />
-            <StartImg2 />
+            <TombBox>
+              <Tomb color={heroColor} time={dieTime} />
+            </TombBox>
           </Dialog>
         </GameStartWrapper>
       )}

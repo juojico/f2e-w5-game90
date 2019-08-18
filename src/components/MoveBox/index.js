@@ -44,13 +44,18 @@ const MoveBox = ({
   start = true,
   test = true,
   area = [0, 200, 0, 200],
-  heroPos
+  heroPos,
+  heroHurt,
+  readyClear
 }) => {
-  const [position, setPosition] = useState({ top: top, left: -width });
+  const [heroTop, setHeroTop] = useState(top);
+  const [heroLeft, setHeroLeft] = useState(-width);
+  const [heroSpeed, setHeroSpeed] = useState(0.1);
   const [move, setMove] = useState(true);
+  const [heroHurting, setHeroHurting] = useState(false);
 
   const startPos = () => {
-    setPosition({ top: top, left: left });
+    setHeroLeft(left);
   };
 
   useEffect(startPos, []);
@@ -58,21 +63,41 @@ const MoveBox = ({
   const setPos = () => {
     if (start) {
       setTimeout(() => {
-        setPosition({
-          top: toRange(position.top + speed * (down - up), area[2], area[3]),
-          left: toRange(
-            position.left + speed * (forward - backward),
-            area[0],
-            area[1]
-          )
-        });
+        setHeroTop(prevTop =>
+          toRange(prevTop + speed * (down - up), area[2], area[3])
+        );
+        setHeroLeft(prevLeft =>
+          toRange(prevLeft + speed * (forward - backward), area[0], area[1])
+        );
+
         setMove(!move);
-        heroPos(position);
+        heroPos({ top: heroTop, left: heroLeft });
       }, 100);
     }
   };
 
   useEffect(setPos, [up, down, backward, forward, move]);
+
+  const setHurtPos = () => {
+    if (heroHurt) {
+      setTimeout(() => {
+        setHeroLeft(prevLeft => toRange(prevLeft - speed, area[0], area[1]));
+        setHeroHurting(heroHurting => !heroHurting);
+      }, 100);
+    }
+  };
+
+  useEffect(setHurtPos, [heroHurt, heroHurting]);
+
+  const readyClearMove = () => {
+    if (readyClear) {
+      setHeroLeft(1000);
+      setHeroTop(200);
+      setHeroSpeed(3);
+    }
+  };
+
+  useEffect(readyClearMove, [readyClear]);
 
   return (
     <BoxWrapper
@@ -81,9 +106,10 @@ const MoveBox = ({
       bgColor={bgColor}
       test={test}
       style={{
-        top: position.top,
-        left: position.left,
-        zIndex: position.top + height
+        top: heroTop,
+        left: heroLeft,
+        zIndex: heroTop + height,
+        transition: heroSpeed + "s linear"
       }}
     >
       {children}

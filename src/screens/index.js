@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Gaming from "./Gaming";
 import UIArea from "./UIArea";
 import GameOver from "./GameOver";
@@ -6,10 +6,15 @@ import GameStart from "./GameStart";
 import GameClear from "./GameClear";
 import Background from "./Background";
 import { TOTAL_TIME, START_LIFE, OBSTACLES } from "../constants";
-import { generateList } from "../utility";
+import { generateList, allBossPos } from "../utility";
+
+const enemies1 = generateList(OBSTACLES.enemies, 10, 90);
+const enemies2 = generateList(OBSTACLES.enemies, 8, 60);
+const enemies3 = generateList(OBSTACLES.enemies, 5, 30);
+const bossPosition = allBossPos([enemies1, enemies2, enemies3]);
 
 const defaultState = {
-  time: { total: TOTAL_TIME, now: TOTAL_TIME, readyStart: 3, readyClear: 5 },
+  time: { now: TOTAL_TIME, readyStart: 1, readyClear: 5 },
   games: {
     start: true,
     readyStart: false,
@@ -17,113 +22,138 @@ const defaultState = {
     gameOver: false,
     readyClear: false,
     gameClear: false,
-    test: true
+    test: false
   },
   hero: {
     animation: "walk",
-    life: START_LIFE,
     startLife: START_LIFE,
+    life: 0,
     left: 0,
     top: 200,
     speed: 20,
     color: 0
   },
-  enemies: {
-    enemies1: generateList(OBSTACLES.enemies, 10, 90),
-    enemies2: generateList(OBSTACLES.enemies, 8, 60),
-    enemies3: generateList(OBSTACLES.enemies, 5, 30),
-    bossPosition: []
-  }
+  enemies: { enemies1, enemies2, enemies3, bossPosition }
 };
 
 function MainScreen() {
-  const [time, setTime] = useState({ ...defaultState.time });
+  const [time_now, setTime_now] = useState(defaultState.time.now);
+  const [time_readyStart, setTime_readyStart] = useState(
+    defaultState.time.readyStart
+  );
+  const [time_readyClear, setTime_readyClear] = useState(
+    defaultState.time.readyClear
+  );
+
   const [games, setGames] = useState({ ...defaultState.games });
+
   const [hero, setHero] = useState({ ...defaultState.hero });
+
   const [enemies, setEnemies] = useState({ ...defaultState.enemies });
 
-  const allboss = () => {
-    const { enemies1: e1, enemies2: e2, enemies3: e3 } = enemies;
+  const [counting, setCounting] = useState(true);
 
-    const enemiesPos = arr => {
-      const list = [];
-      for (let i = 0; i < arr.length; i++) {
-        arr[i].forEach(item => {
-          if (item.name !== "evilHand") {
-            list.push(item.game_time + i * 30);
-          }
-        });
-      }
-      return list;
-    };
-
-    const listq = enemiesPos([e1, e2, e3]);
-
-    setEnemies({ ...enemies, bossPosition: listq });
-  };
-  useEffect(allboss, []);
-
-  useEffect(() => {
-    if (games.gaming) {
-      if (time.now > 0) {
-        setTimeout(() => {
-          setTime({ ...time, now: time.now - 1 });
-        }, 1000);
+  //遊戲準備開始倒數
+  const gameReadyStart = () => {
+    setGames(games => ({ ...games, start: false, readyStart: true }));
+    let timeR = time_readyStart;
+    const count = setInterval(() => {
+      if (timeR > 0) {
+        timeR -= 1;
+        setTime_readyStart(timeR);
       } else {
-        readyClear();
-      }
-    }
-    if (games.readyStart) {
-      if (time.readyStart > 0) {
-        setTimeout(() => {
-          setTime({ ...time, readyStart: time.readyStart - 1 });
-        }, 1000);
-      } else {
+        clearInterval(count);
         gameStart();
       }
+    }, 1000);
+  };
+
+  //遊戲進行中倒數
+  const gameStart = useCallback(() => {
+    setGames(games => ({
+      ...games,
+      start: false,
+      readyStart: false,
+      gaming: true
+    }));
+    setCounting(prevGaming => !prevGaming);
+  }, []);
+
+  const gamingTimer = () => {
+    if (games.gaming) {
+      setTimeout(() => {
+        const timeN = time_now - 1;
+        const gg = games.gameOver;
+        if (gg) {
+          gameOver();
+        } else if (timeN >= 0) {
+          setTime_now(timeN);
+          setCounting(prevCounting => !prevCounting);
+        } else {
+          readyClear();
+        }
+      }, 1000);
     }
-    if (games.readyClear) {
-      if (time.readyClear > 0) {
-        setTimeout(() => {
-          setTime({ ...time, readyClear: time.readyClear - 1 });
-        }, 1000);
+  };
+
+  useEffect(gamingTimer, [counting]);
+
+  //遊戲過關動畫倒數
+  const readyClear = () => {
+    setGames(games => ({
+      ...games,
+      start: false,
+      gaming: true,
+      readyClear: true
+    }));
+    let timeR = time_readyClear;
+    const count = setInterval(() => {
+      if (timeR > 0) {
+        timeR -= 1;
+        setTime_readyStart(timeR);
       } else {
+        clearInterval(count);
         gameClear();
       }
-    }
-  });
-
-  const gameReadyStart = () => {
-    setGames({ ...games, start: false, readyStart: true });
+    }, 1000);
   };
 
-  const gameStart = () => {
-    setGames({ ...games, readyStart: false, gaming: true });
-  };
+  //遊戲狀態切換
+  const gameClear = useCallback(() => {
+    setGames(games => ({
+      ...games,
+      gaming: false,
+      readyClear: false,
+      gameClear: true
+    }));
+  }, []);
 
   const gameReStartGame = () => {
-    setTime({ ...defaultState.time });
-    setGames({ ...defaultState.games });
-    setHero({ ...defaultState.hero });
-    setEnemies({ ...defaultState.enemies });
+    setTime_now(defaultState.time.now);
+    setTime_readyStart(defaultState.time.readyStart);
+    setTime_readyClear(defaultState.time.readyClear);
+
+    setGames({ ...Object.assign({}, defaultState.games) });
+    setHero({ ...Object.assign({}, defaultState.hero) });
+
+    const enemies1 = generateList(OBSTACLES.enemies, 10, 90);
+    const enemies2 = generateList(OBSTACLES.enemies, 8, 60);
+    const enemies3 = generateList(OBSTACLES.enemies, 5, 30);
+    const bossPosition = allBossPos([enemies1, enemies2, enemies3]);
+
+    setEnemies({ enemies1, enemies2, enemies3, bossPosition });
   };
 
-  const readyClear = () => {
-    setGames({ ...games, readyClear: true });
-  };
+  const [dieTime,setDieTime] = useState(0);
+  const gameOver = useCallback(() => {
+    setGames(games => ({ ...games, gaming: false, gameOver: true }));
+    setDieTime(new Date());
+  }, []);
 
-  const gameClear = () => {
-    setGames({ ...games, gaming: false, readyClear: false, gameClear: true });
-  };
-
-  const gameOver = () => {
-    setGames({ ...games, gaming: false, gameOver: true });
-  };
-
-  const onClickHero = () => {
-    const heroRanColor = () => Math.round(Math.random() * 11) * 30;
-    setHero({ ...hero, color: heroRanColor() });
-  };
+  const onClickHero = useCallback(() => {
+    const heroRanColor = Math.round(Math.random() * 11) * 30;
+    setHero(hero => ({ ...hero, color: heroRanColor }));
+  }, []);
 
   return (
     <>
@@ -133,29 +163,37 @@ function MainScreen() {
         heroColor={hero.color}
         onClickHero={onClickHero}
       />
-      <GameOver open={games.gameOver} onClick={gameReStartGame} />
+      <GameOver
+        open={games.gameOver}
+        heroColor={hero.color}
+        dieTime={dieTime}
+        onClick={gameReStartGame}
+      />
       <GameClear open={games.gameClear} onClick={gameReStartGame} />
       <Background
         start={games.gaming}
         gameClear={games.gameClear}
         gaming={games.gaming}
         end={games.readyClear}
-        time={time.now}
+        time={time_now}
       />
-      <Gaming
-        start={games.gaming}
-        time={time.now}
-        gameClear={games.gameClear}
-        defaulthero={hero}
-        gameOver={gameOver}
-        enemies={enemies}
-        test={games.test}
-      />
+      {games.gameOver ? null : (
+        <Gaming
+          start={games.gaming}
+          time={time_now}
+          readyClear={games.readyClear}
+          gameClear={games.gameClear}
+          defaulthero={hero}
+          gameOver={gameOver}
+          enemies={enemies}
+          test={games.test}
+        />
+      )}
       <UIArea
         start={games.gaming}
-        time={time.now}
+        time={time_now}
         totalTime={TOTAL_TIME}
-        readyTime={time.readyStart}
+        readyTime={time_readyStart}
         readyStart={games.readyStart}
         enemies={enemies.bossPosition}
       />

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import moment from "moment";
 import Gaming from "./Gaming";
 import UIArea from "./UIArea";
 import GameOver from "./GameOver";
@@ -14,7 +15,7 @@ const enemies3 = generateList(OBSTACLES.enemies, 5, 30);
 const bossPosition = allBossPos([enemies1, enemies2, enemies3]);
 
 const defaultState = {
-  time: { now: TOTAL_TIME, readyStart: 1, readyClear: 5 },
+  time: { now: TOTAL_TIME, readyStart: 5, readyClear: 5 },
   games: {
     start: true,
     readyStart: false,
@@ -27,7 +28,7 @@ const defaultState = {
   hero: {
     animation: "walk",
     startLife: START_LIFE,
-    life: 0,
+    life: START_LIFE,
     left: 0,
     top: 200,
     speed: 20,
@@ -144,10 +145,12 @@ function MainScreen() {
     setEnemies({ enemies1, enemies2, enemies3, bossPosition });
   };
 
-  const [dieTime,setDieTime] = useState(0);
-  const gameOver = useCallback(() => {
+  const [dieTime, setDieTime] = useState(0);
+  const [dieTop, setDieTop] = useState(0);
+  const gameOver = useCallback(top => {
     setGames(games => ({ ...games, gaming: false, gameOver: true }));
-    setDieTime(new Date());
+    setDieTime(moment().format("YYYY/MM/DD hh:mm:ss"));
+    setDieTop(top);
   }, []);
 
   const onClickHero = useCallback(() => {
@@ -165,13 +168,15 @@ function MainScreen() {
       />
       <GameOver
         open={games.gameOver}
-        heroColor={hero.color}
+        color={hero.color}
         dieTime={dieTime}
+        top={dieTop}
         onClick={gameReStartGame}
+        time={time_now}
       />
       <GameClear open={games.gameClear} onClick={gameReStartGame} />
       <Background
-        start={games.gaming}
+        start={games.start}
         gameClear={games.gameClear}
         gaming={games.gaming}
         end={games.readyClear}

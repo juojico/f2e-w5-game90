@@ -29,14 +29,12 @@ const LINE_BG = {
 const Ground = ({ children, start = false, gaming = false, end = false }) => {
   return (
     <GroundWrapper>
-      {start || gaming ? (
-        <MarkingLine
-          lineBg={LINE_BG["startLine"]}
-          style={{
-            left: gaming ? "-200px" : 0
-          }}
-        />
-      ) : null}
+      <MarkingLine
+        lineBg={LINE_BG["startLine"]}
+        style={{
+          left: gaming ? "-200px" : 0
+        }}
+      />
       {gaming ? (
         <MarkingLine
           lineBg={LINE_BG["finishLine"]}

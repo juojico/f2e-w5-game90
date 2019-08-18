@@ -40,4 +40,26 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
   </body>
+
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/6.4.0/firebase-app.js"></script>
+
+  <!-- TODO: Add SDKs for Firebase products that you want to use
+      https://firebase.google.com/docs/web/setup#config-web-app -->
+
+  <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+      apiKey: "AIzaSyDoJ6azBIGCkLF09c5N88BqD4eeq7dAuHQ",
+      authDomain: "jico-game.firebaseapp.com",
+      databaseURL: "https://jico-game.firebaseio.com",
+      projectId: "jico-game",
+      storageBucket: "",
+      messagingSenderId: "722564177930",
+      appId: "1:722564177930:web:5ff320cb5648f054"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+  </script>
+  
 </html>

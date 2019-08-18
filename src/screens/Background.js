@@ -27,7 +27,7 @@ const Background = ({ start = false, gaming, end, time }) => {
 
   return (
     <BgArea>
-      <Sky start={start} end={end} />
+      <Sky start={gaming} end={end} />
       <Ground start={start} gaming={gaming} end={end}>
         {bgThings1.map(item => (
           <Things
@@ -35,7 +35,7 @@ const Background = ({ start = false, gaming, end, time }) => {
             top={item.top}
             left={1280 + item.game_time * 200}
             actor={item.name}
-            start={start}
+            start={gaming}
           />
         ))}
         {bgThings2.map(item => (
@@ -44,7 +44,7 @@ const Background = ({ start = false, gaming, end, time }) => {
             top={item.top}
             left={1280 + item.game_time * 200}
             actor={item.name}
-            start={start}
+            start={gaming}
           />
         ))}
       </Ground>

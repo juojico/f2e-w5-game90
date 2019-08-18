@@ -143,7 +143,7 @@ const Gaming = ({
     setHero(hero => ({ ...hero, ...heroPosition }));
   }, []);
 
-  const crash = power => {
+  const crash = (power,top) => {
     if (!invincible) {
       if (power === "star") {
         setHero(hero => ({ ...hero, animation: "buff" }));
@@ -161,7 +161,7 @@ const Gaming = ({
             setHeroHurt(false);
             setInvincible(false);
             setTimeout(() => {
-              gameOver();
+              gameOver(top);
             }, 1000);
           }, 500);
         } else {

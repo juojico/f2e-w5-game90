@@ -149,7 +149,7 @@ const Boxs = ({
           if (isInRange(boxT, minT, maxT)) {
             if (isInRange(boxL, minL, maxL)) {
               console.log("TCL: checkImpact -> checkImpact", "crash", actor);
-              crash(power);
+              crash(power, heroPos[0]);
               if (actor === "star") {
                 setClose(true);
               }

@@ -60,8 +60,9 @@ const GameOver = ({ open, onClick, color, dieTime, top, time }) => {
 
   const onConfirm = () => {
     const game_time = TOTAL_TIME - time;
-    console.log("TCL: GameOver -> info", name, color, dieTime, top, game_time);
+    const id = parseInt(Date.now());
     const payload = {
+      id,
       time: dieTime,
       name,
       game_time,

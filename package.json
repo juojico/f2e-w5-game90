@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "eslint-plugin-react-hooks": "^1.7.0",
+    "firebase": "^6.4.0",
+    "firebase-app": "^0.0.1",
     "moment": "^2.24.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",

@@ -4,7 +4,6 @@ import Hero from "../components/Hero";
 import BoxArea from "./GamingBoxArea";
 import Heart from "../components/Heart";
 import MoveBox from "../components/MoveBox";
-import { RECENT_PLAYER } from "../constants";
 import { generateList } from "../utility";
 
 const GamingWrapper = styled.div`
@@ -29,8 +28,10 @@ const Gaming = ({
   enemies,
   gameOver,
   readyClear,
+  players,
   test
 }) => {
+  console.log("TCL: players", players)
   const [hero, setHero] = useState({ ...defaulthero });
   const [heroHurt, setHeroHurt] = useState(false);
   const [moving, setMoving] = useState({
@@ -208,7 +209,7 @@ const Gaming = ({
               test={test}
             />
             <BoxArea
-              data={RECENT_PLAYER}
+              data={players}
               type={"tomb"}
               keyName={"tomb"}
               heroPos={[hero.top, hero.left]}

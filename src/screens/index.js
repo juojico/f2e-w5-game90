@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
+import * as firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/firestore";
 import moment from "moment";
 import Gaming from "./Gaming";
 import UIArea from "./UIArea";
@@ -8,6 +11,24 @@ import GameClear from "./GameClear";
 import Background from "./Background";
 import { TOTAL_TIME, START_LIFE, OBSTACLES } from "../constants";
 import { generateList, allBossPos } from "../utility";
+
+//API
+const firebaseConfig = {
+  apiKey: "AIzaSyDoJ6azBIGCkLF09c5N88BqD4eeq7dAuHQ",
+  authDomain: "jico-game.firebaseapp.com",
+  databaseURL: "https://jico-game.firebaseio.com",
+  projectId: "jico-game",
+  storageBucket: "jico-game.appspot.com",
+  messagingSenderId: "722564177930",
+  appId: "1:722564177930:web:5ff320cb5648f054"
+};
+firebase.initializeApp(firebaseConfig);
+
+const db = firebase.firestore();
+
+function storedata(payload) {
+  db.collection("players").add(payload);
+}
 
 const enemies1 = generateList(OBSTACLES.enemies, 10, 90);
 const enemies2 = generateList(OBSTACLES.enemies, 8, 60);
@@ -53,6 +74,23 @@ function MainScreen() {
   const [enemies, setEnemies] = useState({ ...defaultState.enemies });
 
   const [counting, setCounting] = useState(true);
+
+  const [players, setPlayers] = useState([]);
+  console.log("TCL: MainScreen -> players", players);
+
+  const onEnter = () => {
+    let list = [];
+    db.collection("players")
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          list.push(doc.data());
+        });
+        setPlayers(list);
+      });
+  };
+
+  useEffect(onEnter, []);
 
   //遊戲準備開始倒數
   const gameReadyStart = () => {
@@ -129,7 +167,12 @@ function MainScreen() {
     }));
   }, []);
 
-  const gameReStartGame = () => {
+  const gameReStartGame = payload => {
+    storedata(payload);
+    console.log("TCL: MainScreen -> payload", payload);
+    setPlayers(players => [...players, { ...payload }]);
+    console.log("TCL: MainScreen -> Players", players);
+
     setTime_now(defaultState.time.now);
     setTime_readyStart(defaultState.time.readyStart);
     setTime_readyClear(defaultState.time.readyClear);
@@ -191,6 +234,7 @@ function MainScreen() {
           defaulthero={hero}
           gameOver={gameOver}
           enemies={enemies}
+          players={players}
           test={games.test}
         />
       )}

@@ -31,7 +31,6 @@ const Gaming = ({
   players,
   test
 }) => {
-  console.log("TCL: players", players)
   const [hero, setHero] = useState({ ...defaulthero });
   const [heroHurt, setHeroHurt] = useState(false);
   const [moving, setMoving] = useState({

@@ -76,7 +76,6 @@ function MainScreen() {
   const [counting, setCounting] = useState(true);
 
   const [players, setPlayers] = useState([]);
-  console.log("TCL: MainScreen -> players", players);
 
   const onEnter = () => {
     let list = [];
@@ -169,9 +168,7 @@ function MainScreen() {
 
   const gameReStartGame = payload => {
     storedata(payload);
-    console.log("TCL: MainScreen -> payload", payload);
     setPlayers(players => [...players, { ...payload }]);
-    console.log("TCL: MainScreen -> Players", players);
 
     setTime_now(defaultState.time.now);
     setTime_readyStart(defaultState.time.readyStart);
